@@ -1,0 +1,38 @@
+language: generic
+
+services:
+  - docker
+
+env:
+  global:
+    IMAGE_NAME=rclsilver/meross2influxdb
+
+matrix:
+  include:
+    - name: amd64-linux
+      sudo: required
+      env:
+        - ARCH=amd64
+
+before_install:
+  - IMAGE_VERSION="$(awk '$2 == "VERSION" { print $3; exit }' Dockerfile)"
+  - echo "Building version ${IMAGE_VERSION} for architecture '${ARCH}' with $(docker --version)"
+
+install:
+  - |
+    docker build \
+      --build-arg ARCH=${ARCH} \
+      -t ${IMAGE_NAME}-${ARCH}:v${IMAGE_VERSION} \
+      -f Dockerfile \
+      .
+
+after_success:
+  - echo "${DOCKER_PASSWORD}" | docker login --username="${DOCKER_USERNAME}" --password-stdin
+  - docker tag "${IMAGE_NAME}-${ARCH}" "${IMAGE_NAME}-${ARCH}:latest"
+  - docker push "${IMAGE_NAME}-${ARCH}:latest"
+  - docker tag "${IMAGE_NAME}-${ARCH}" "${IMAGE_NAME}-${ARCH}:v${IMAGE_VERSION}"
+  - docker push "${IMAGE_NAME}-${ARCH}:v${IMAGE_VERSION}"
+
+branches:
+  only:
+    - master
