@@ -168,11 +168,11 @@ def update(config):
 
         try:
             client = InfluxDBClient(
-                host=config.get('influxdb', {}).get('host'),
-                port=config.get('influxdb', {}).get('port', 8086),
-                username=config.get('influxdb', {}).get('user'),
-                password=config.get('influxdb', {}).get('pass'),
-                database=config.get('influxdb', {}).get('base'),
+                host=os.getenv('INFLUXDB_HOST'),
+                port=os.getenv('INFLUXDB_PORT', 8086),
+                username=os.getenv('INFLUXDB_USER'),
+                password=os.getenv('INFLUXDB_PASS'),
+                database=os.getenv('INFLUXDB_BASE')
             )
             client.write_points(points)
 

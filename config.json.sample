@@ -1,11 +1,4 @@
 {
-    "influxdb": {
-        "host": "localhost",
-        "port": 8086,
-        "user": "meross",
-        "pass": "meross",
-        "base": "meross"
-    },
     "devices": [
         {
             "name": "meross-01",
